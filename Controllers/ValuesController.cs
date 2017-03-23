@@ -9,24 +9,26 @@ namespace dotnetcoretest.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        public static List<string> controllervalues =  new List<string> { "value1", "value2" };
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return controllervalues;
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            return controllervalues.ElementAt(id);
         }
 
         // POST api/values
         [HttpPost]
         public void Post([FromBody]string value)
         {
+            controllervalues.Add(value);
         }
 
         // PUT api/values/5
@@ -39,6 +41,7 @@ namespace dotnetcoretest.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            controllervalues.RemoveAt(id);
         }
     }
 }
