@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using dotnetcoretest.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace dotnetcoretest
 {
@@ -32,9 +35,27 @@ namespace dotnetcoretest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             // Add framework services.
             services.AddMvc();
             services.AddEntityFrameworkSqlite().AddDbContext<Models.TicketingContext>();
+               services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", 
+        new Info 
+        {
+             Title = "Custom API", 
+             Version = "v1", 
+               Description = "A simple example ASP.NET Core Web API",
+        TermsOfService = "None",
+        Contact = new Swashbuckle.AspNetCore.Swagger.Contact { Name = "Jonathan Honoré", Email = "", Url = "https://twitter.com/fantasticJoho"},
+        License = new License { Name = "No licence yet", Url = "http://google.com" }
+              });
+    });
+ 
+      
+    
+ 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,8 +63,14 @@ namespace dotnetcoretest
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
+            app.UseStaticFiles();
             app.UseMvc();
+            app.UseSwagger();
+
+            app.UseSwaggerUi(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+            });
         }
     }
 }
